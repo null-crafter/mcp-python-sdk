@@ -304,7 +304,7 @@ class Server(Generic[LifespanResultT, RequestT]):
 
                             return types.BlobResourceContents(
                                 uri=req.params.uri,
-                                blob=base64.urlsafe_b64encode(data).decode(),
+                                blob=base64.b64encode(data).decode(),
                                 mimeType=mime_type or "application/octet-stream",
                             )
 
