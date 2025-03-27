@@ -36,7 +36,7 @@ from mcp.server.lowlevel.server import lifespan as default_lifespan
 from mcp.server.session import ServerSession, ServerSessionT
 from mcp.server.sse import SseServerTransport
 from mcp.server.stdio import stdio_server
-from mcp.shared.context import LifespanContextT, RequestContext
+from mcp.shared.context import LifespanContextT, RequestContext, RequestT
 from mcp.types import (
     AnyFunction,
     EmbeddedResource,
@@ -182,7 +182,7 @@ class FastMCP:
             for info in tools
         ]
 
-    def get_context(self) -> Context[ServerSession, object]:
+    def get_context(self) -> Context[ServerSession, object, Request]:
         """
         Returns a Context object. Note that the context will only be valid
         during a request; outside a request, most methods will error.
@@ -491,6 +491,7 @@ class FastMCP:
                     streams[0],
                     streams[1],
                     self._mcp_server.create_initialization_options(),
+                    request=request,
                 )
 
         return Starlette(
@@ -558,7 +559,7 @@ def _convert_to_content(
     return [TextContent(type="text", text=result)]
 
 
-class Context(BaseModel, Generic[ServerSessionT, LifespanContextT]):
+class Context(BaseModel, Generic[ServerSessionT, LifespanContextT, RequestT]):
     """Context object providing access to MCP capabilities.
 
     This provides a cleaner interface to MCP's RequestContext functionality.
@@ -592,13 +593,13 @@ class Context(BaseModel, Generic[ServerSessionT, LifespanContextT]):
     The context is optional - tools that don't need it can omit the parameter.
     """
 
-    _request_context: RequestContext[ServerSessionT, LifespanContextT] | None
+    _request_context: RequestContext[ServerSessionT, LifespanContextT, RequestT] | None
     _fastmcp: FastMCP | None
 
     def __init__(
         self,
         *,
-        request_context: RequestContext[ServerSessionT, LifespanContextT] | None = None,
+        request_context: RequestContext[ServerSessionT, LifespanContextT, RequestT] | None = None,
         fastmcp: FastMCP | None = None,
         **kwargs: Any,
     ):

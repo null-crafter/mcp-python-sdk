@@ -76,7 +76,7 @@ class Tool(BaseModel):
     async def run(
         self,
         arguments: dict[str, Any],
-        context: Context[ServerSessionT, LifespanContextT] | None = None,
+        context: Context[ServerSessionT, LifespanContextT, Any] | None = None,
     ) -> Any:
         """Run the tool with arguments."""
         try:

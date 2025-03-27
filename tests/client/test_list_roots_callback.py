@@ -1,3 +1,5 @@
+from types import NoneType
+
 import pytest
 from pydantic import FileUrl
 
@@ -30,7 +32,7 @@ async def test_list_roots_callback():
     )
 
     async def list_roots_callback(
-        context: RequestContext[ClientSession, None],
+        context: RequestContext[ClientSession, None, None],
     ) -> ListRootsResult:
         return callback_return
 
