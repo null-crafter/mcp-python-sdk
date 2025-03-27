@@ -91,7 +91,7 @@ logger = logging.getLogger(__name__)
 LifespanResultT = TypeVar("LifespanResultT")
 
 # This will be properly typed in each Server instance's context
-request_ctx: contextvars.ContextVar[RequestContext[ServerSession, Any, RequestT]] = (
+request_ctx: contextvars.ContextVar[RequestContext[ServerSession, Any, Any]] = (
     contextvars.ContextVar("request_ctx")
 )
 
@@ -128,7 +128,8 @@ class Server(Generic[LifespanResultT, RequestT]):
         version: str | None = None,
         instructions: str | None = None,
         lifespan: Callable[
-            [Server[LifespanResultT, RequestT]], AbstractAsyncContextManager[LifespanResultT]
+            [Server[LifespanResultT, RequestT]],
+            AbstractAsyncContextManager[LifespanResultT],
         ] = lifespan,
     ):
         self.name = name
@@ -213,7 +214,9 @@ class Server(Generic[LifespanResultT, RequestT]):
         )
 
     @property
-    def request_context(self) -> RequestContext[ServerSession, LifespanResultT, RequestT]:
+    def request_context(
+        self,
+    ) -> RequestContext[ServerSession, LifespanResultT, RequestT]:
         """If called outside of a request context, this will raise a LookupError."""
         return request_ctx.get()
 
@@ -518,7 +521,12 @@ class Server(Generic[LifespanResultT, RequestT]):
                 ):
                     with responder:
                         await self._handle_request(
-                            message, req, session, lifespan_context, raise_exceptions, request
+                            message,
+                            req,
+                            session,
+                            lifespan_context,
+                            raise_exceptions,
+                            request,
                         )
                 case types.ClientNotification(root=notify):
                     await self._handle_notification(notify)

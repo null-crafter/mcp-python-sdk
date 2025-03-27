@@ -1,5 +1,3 @@
-from types import NoneType
-
 import pytest
 from pydantic import FileUrl
 

@@ -50,7 +50,7 @@ class ToolManager:
         self,
         name: str,
         arguments: dict[str, Any],
-        context: Context[ServerSessionT, LifespanContextT, Any] | None = None,
+        context: Context[ServerSessionT, LifespanContextT] | None = None,
     ) -> Any:
         """Call a tool by name with arguments."""
         tool = self.get_tool(name)
